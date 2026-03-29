@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { 
   Calendar, Clock, Video, Phone, MapPin, Plus, ChevronLeft, ChevronRight,
-  User, FileText, Check, X, PhoneCall, Bell, MoreVertical, XCircle, Eye
+  User, FileText, Check, X, PhoneCall, Bell, MoreVertical, XCircle, Eye,
+  Brain, Sparkles, TrendingUp, Users
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
 
 const statusConfig = {
-  scheduled: { label: '已预约', color: 'bg-blue-500/20 text-blue-400', icon: Calendar },
-  in_progress: { label: '进行中', color: 'bg-yellow-500/20 text-yellow-400', icon: Clock },
-  completed: { label: '已完成', color: 'bg-emerald-500/20 text-emerald-400', icon: Check },
-  cancelled: { label: '已取消', color: 'bg-red-500/20 text-red-400', icon: X },
+  scheduled: { label: '已预约', color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400', icon: Calendar },
+  in_progress: { label: '进行中', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400', icon: Clock },
+  completed: { label: '已完成', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400', icon: Check },
+  cancelled: { label: '已取消', color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400', icon: X },
 };
 
 const InterviewCard = ({ interview, onView }) => {
@@ -36,15 +38,15 @@ const InterviewCard = ({ interview, onView }) => {
   };
 
   return (
-    <div className="card-hover group">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-500/50 transition-all group">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
             <span className="text-lg font-bold text-white">{interview.candidateName?.charAt(0) || '?'}</span>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white group-hover:text-primary-400 transition-colors">{interview.candidateName}</h3>
-            <p className="text-sm text-gray-400">{interview.jobTitle}</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{interview.candidateName}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{interview.jobTitle}</p>
           </div>
         </div>
         <span className={`badge ${statusConfig[interview.status]?.color}`}>
@@ -53,11 +55,11 @@ const InterviewCard = ({ interview, onView }) => {
       </div>
 
       <div className="space-y-3 mb-4">
-        <div className="flex items-center gap-4 text-sm text-gray-400">
-          <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {interview.date}</span>
-          <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {interview.time}</span>
+        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+          <span className="flex items-center gap-1"><Calendar className="w-4 h-4 text-blue-500" /> {interview.date}</span>
+          <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-gray-400" /> {interview.time}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-400">
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
           {getTypeIcon()}
           <span>{getTypeLabel()}</span>
         </div>
@@ -65,19 +67,19 @@ const InterviewCard = ({ interview, onView }) => {
 
       {interview.questions && interview.questions.length > 0 && (
         <div className="mb-4">
-          <p className="text-xs text-gray-500 mb-2">AI生成问题 ({interview.questions.length})</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium">AI生成问题 ({interview.questions.length})</p>
           <div className="flex flex-wrap gap-1">
             {interview.questions.slice(0, 2).map((q, i) => (
-              <span key={i} className="text-xs px-2 py-1 rounded-md bg-dark-300 text-gray-400">{q}</span>
+              <span key={i} className="text-xs px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{q}</span>
             ))}
             {interview.questions.length > 2 && (
-              <span className="text-xs px-2 py-1 rounded-md bg-dark-300 text-gray-500">+{interview.questions.length - 2}</span>
+              <span className="text-xs px-2 py-1 rounded-lg bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400">+{interview.questions.length - 2}</span>
             )}
           </div>
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4 border-t border-dark-100">
+      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-2">
           {interview.type === 'video' && (
             <button className="btn-gradient text-sm px-3 py-1.5 flex items-center gap-1">
@@ -101,10 +103,6 @@ const InterviewCard = ({ interview, onView }) => {
 const ScheduleView = ({ interviews, currentDate, onPrev, onNext }) => {
   const timeSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
   
-  const getInterviewForSlot = (time) => {
-    return interviews.find(i => i.time === time);
-  };
-
   const weekDays = [];
   const startOfWeek = new Date(currentDate);
   startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
@@ -116,16 +114,16 @@ const ScheduleView = ({ interviews, currentDate, onPrev, onNext }) => {
   }
 
   return (
-    <div className="card">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={onPrev} className="p-2 hover:bg-dark-100 rounded-lg transition-colors">
-          <ChevronLeft className="w-5 h-5 text-gray-400" />
+        <button onClick={onPrev} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
-        <h3 className="text-lg font-semibold text-white">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           {currentDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
         </h3>
-        <button onClick={onNext} className="p-2 hover:bg-dark-100 rounded-lg transition-colors">
-          <ChevronRight className="w-5 h-5 text-gray-400" />
+        <button onClick={onNext} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
       </div>
 
@@ -133,8 +131,8 @@ const ScheduleView = ({ interviews, currentDate, onPrev, onNext }) => {
         <div className="col-span-1" />
         {weekDays.map((day, index) => (
           <div key={index} className="text-center">
-            <p className="text-xs text-gray-400">{day.toLocaleDateString('zh-CN', { weekday: 'short' })}</p>
-            <p className={`text-lg font-bold ${day.toDateString() === new Date().toDateString() ? 'text-primary-400' : 'text-white'}`}>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{day.toLocaleDateString('zh-CN', { weekday: 'short' })}</p>
+            <p className={`text-lg font-bold ${day.toDateString() === new Date().toDateString() ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
               {day.getDate()}
             </p>
           </div>
@@ -142,23 +140,10 @@ const ScheduleView = ({ interviews, currentDate, onPrev, onNext }) => {
 
         {timeSlots.map((time) => (
           <React.Fragment key={time}>
-            <div className="text-xs text-gray-500 py-2 text-right pr-2">{time}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 py-2 text-right pr-2">{time}</div>
             {weekDays.map((day, dayIndex) => {
-              const interview = interviews.find(i => {
-                const iDate = new Date(i.date);
-                return iDate.toDateString() === day.toDateString() && i.time === time;
-              });
               return (
                 <div key={dayIndex} className="py-1 min-h-[40px]">
-                  {interview && (
-                    <div className={`px-2 py-1 rounded text-xs truncate ${
-                      interview.type === 'video' ? 'bg-blue-500/30 text-blue-300' :
-                      interview.type === 'phone' ? 'bg-green-500/30 text-green-300' :
-                      'bg-purple-500/30 text-purple-300'
-                    }`}>
-                      {interview.candidateName}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -178,35 +163,35 @@ const CallRecords = () => {
   ];
 
   return (
-    <div className="card">
-      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-        <PhoneCall className="w-5 h-5 text-primary-400" />
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <PhoneCall className="w-5 h-5 text-blue-500" />
         外呼记录
       </h3>
       <div className="space-y-3">
         {callRecords.map((record) => (
-          <div key={record.id} className="flex items-center justify-between p-3 rounded-lg bg-dark-300 hover:bg-dark-100 transition-colors">
+          <div key={record.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
             <div className="flex items-center gap-3">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                record.status === 'success' ? 'bg-emerald-500/20 text-emerald-400' :
-                record.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-red-500/20 text-red-400'
+                record.status === 'success' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                record.status === 'pending' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400' :
+                'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400'
               }`}>
                 {record.status === 'success' ? <Check className="w-4 h-4" /> :
                  record.status === 'pending' ? <Clock className="w-4 h-4" /> :
                  <X className="w-4 h-4" />}
               </div>
               <div>
-                <p className="text-sm font-medium text-white">{record.candidateName}</p>
-                <p className="text-xs text-gray-400">{record.phone} · {record.time}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{record.candidateName}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{record.phone} · {record.time}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-300">{record.duration}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200">{record.duration}</p>
               <p className={`text-xs ${
-                record.status === 'success' ? 'text-emerald-400' :
-                record.status === 'pending' ? 'text-yellow-400' :
-                'text-red-400'
+                record.status === 'success' ? 'text-emerald-600 dark:text-emerald-400' :
+                record.status === 'pending' ? 'text-yellow-600 dark:text-yellow-400' :
+                'text-red-600 dark:text-red-400'
               }`}>{record.result}</p>
             </div>
           </div>
@@ -217,6 +202,7 @@ const CallRecords = () => {
 };
 
 const Interviews = () => {
+  const navigate = useNavigate();
   const interviews = useStore((state) => state.interviews);
   const [viewMode, setViewMode] = useState('card');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -237,8 +223,8 @@ const Interviews = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">面试安排</h1>
-          <p className="text-gray-400 mt-1">管理面试日程，AI生成面试问题</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">面试安排</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">管理面试日程，AI生成面试问题</p>
         </div>
         <button className="btn-gradient flex items-center gap-2">
           <Plus className="w-5 h-5" />
@@ -248,35 +234,35 @@ const Interviews = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="card text-center">
-          <Calendar className="w-8 h-8 mx-auto mb-2 text-primary-400" />
-          <p className="text-2xl font-bold text-white">{statusCounts.scheduled}</p>
-          <p className="text-sm text-gray-400">待面试</p>
-        </div>
-        <div className="card text-center">
-          <Clock className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
-          <p className="text-2xl font-bold text-white">{statusCounts.in_progress}</p>
-          <p className="text-sm text-gray-400">进行中</p>
-        </div>
-        <div className="card text-center">
-          <Check className="w-8 h-8 mx-auto mb-2 text-emerald-400" />
-          <p className="text-2xl font-bold text-white">{statusCounts.completed}</p>
-          <p className="text-sm text-gray-400">已完成</p>
-        </div>
-        <div className="card text-center">
-          <PhoneCall className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-          <p className="text-2xl font-bold text-white">{todayInterviews.length}</p>
-          <p className="text-sm text-gray-400">今日面试</p>
-        </div>
+        <button onClick={() => navigate('/call-records')} className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white text-center hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30">
+          <Calendar className="w-8 h-8 mx-auto mb-2" />
+          <p className="text-3xl font-bold">{statusCounts.scheduled}</p>
+          <p className="text-blue-100 text-sm font-medium mt-1">待面试</p>
+        </button>
+        <button onClick={() => navigate('/call-records')} className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-5 text-white text-center hover:from-yellow-600 hover:to-orange-600 transition-all shadow-lg shadow-yellow-500/30">
+          <Clock className="w-8 h-8 mx-auto mb-2" />
+          <p className="text-3xl font-bold">{statusCounts.in_progress}</p>
+          <p className="text-yellow-100 text-sm font-medium mt-1">进行中</p>
+        </button>
+        <button onClick={() => navigate('/interview-analysis')} className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-5 text-white text-center hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/30">
+          <Check className="w-8 h-8 mx-auto mb-2" />
+          <p className="text-3xl font-bold">{statusCounts.completed}</p>
+          <p className="text-emerald-100 text-sm font-medium mt-1">已完成</p>
+        </button>
+        <button onClick={() => navigate('/call-records')} className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-5 text-white text-center hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/30">
+          <PhoneCall className="w-8 h-8 mx-auto mb-2" />
+          <p className="text-3xl font-bold">{todayInterviews.length}</p>
+          <p className="text-purple-100 text-sm font-medium mt-1">今日面试</p>
+        </button>
       </div>
 
       {/* View Mode Toggle */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button onClick={() => setViewMode('card')} className={`px-4 py-2 rounded-lg text-sm transition-colors ${viewMode === 'card' ? 'bg-primary-500 text-white' : 'bg-dark-200 text-gray-400 hover:text-white'}`}>
+          <button onClick={() => setViewMode('card')} className={`px-4 py-2 rounded-lg text-sm transition-colors font-medium ${viewMode === 'card' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>
             卡片视图
           </button>
-          <button onClick={() => setViewMode('schedule')} className={`px-4 py-2 rounded-lg text-sm transition-colors ${viewMode === 'schedule' ? 'bg-primary-500 text-white' : 'bg-dark-200 text-gray-400 hover:text-white'}`}>
+          <button onClick={() => setViewMode('schedule')} className={`px-4 py-2 rounded-lg text-sm transition-colors font-medium ${viewMode === 'schedule' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>
             日程视图
           </button>
         </div>
@@ -285,8 +271,8 @@ const Interviews = () => {
       {viewMode === 'card' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-500" />
               即将到来的面试
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
