@@ -1,0 +1,29 @@
+﻿{
+  "name": "ai-recruitment-backend",
+  "version": "1.0.0",
+  "description": "AI智能招聘系统后端服务",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "init-db": "node src/database/init.js"
+  },
+  "keywords": ["recruitment", "ai", "hr", "backend"],
+  "author": "Matrix Agent",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sql.js": "^1.10.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "uuid": "^9.0.0",
+    "dotenv": "^16.4.1",
+    "express-validator": "^7.0.1",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

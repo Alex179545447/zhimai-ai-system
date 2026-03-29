@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #0f172a;
+  color: #f1f5f9;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+@layer components {
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-lg shadow-primary-500/25;
+  }
+  
+  .btn-gradient-outline {
+    @apply bg-transparent border border-primary-500 text-primary-400 hover:bg-primary-500/10 font-medium py-2 px-4 rounded-lg transition-all duration-300;
+  }
+  
+  .card {
+    @apply bg-dark-200 rounded-xl border border-dark-100 p-6 shadow-lg;
+  }
+  
+  .card-hover {
+    @apply card hover:border-primary-500/50 transition-all duration-300;
+  }
+  
+  .input-field {
+    @apply w-full bg-dark-300 border border-dark-100 rounded-lg px-4 py-2.5 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all;
+  }
+  
+  .select-field {
+    @apply w-full bg-dark-300 border border-dark-100 rounded-lg px-4 py-2.5 text-gray-100 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all cursor-pointer;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply badge bg-primary-500/20 text-primary-400;
+  }
+  
+  .badge-success {
+    @apply badge bg-emerald-500/20 text-emerald-400;
+  }
+  
+  .badge-warning {
+    @apply badge bg-amber-500/20 text-amber-400;
+  }
+  
+  .badge-error {
+    @apply badge bg-red-500/20 text-red-400;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

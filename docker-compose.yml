@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+    container_name: zhihui-ai-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - zhihui-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile.backend
+    container_name: zhihui-ai-backend
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/app/data
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/.env:/app/.env
+    networks:
+      - zhihui-network
+    restart: unless-stopped
+
+networks:
+  zhihui-network:
+    driver: bridge
