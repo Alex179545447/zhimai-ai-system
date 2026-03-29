@@ -3,8 +3,10 @@ import {
   Plus, Search, Filter, Grid, List, MoreVertical, Mail, Phone,
   MapPin, Calendar, Briefcase, Eye, Edit2, Trash2, Upload, X,
   Star, Clock, ChevronDown, User, FileText, Sparkles, CheckCircle,
-  AlertCircle, XCircle, ArrowRight
+  AlertCircle, XCircle, ArrowRight, RefreshCw, Settings,
+  Link2, Check, Loader2, Inbox, File, ExternalLink
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
 
 const statusConfig = {
@@ -13,6 +15,329 @@ const statusConfig = {
   offer: { label: '待入职', color: 'bg-purple-500/20 text-purple-400', icon: Star },
   hired: { label: '已入职', color: 'bg-emerald-500/20 text-emerald-400', icon: CheckCircle },
   rejected: { label: '已拒绝', color: 'bg-red-500/20 text-red-400', icon: XCircle },
+};
+
+// 邮箱关联设置弹窗
+const EmailSettingsModal = ({ onClose }) => {
+  const [email, setEmail] = useState(localStorage.getItem('resumeEmail') || '');
+  const [password, setPassword] = useState('');
+  const [isConnected, setIsConnected] = useState(!!localStorage.getItem('resumeEmail'));
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [syncInterval, setSyncInterval] = useState('30'); // 分钟
+  const [autoParse, setAutoParse] = useState(true);
+
+  const handleConnect = async () => {
+    if (!email || !password) {
+      setError('请填写完整的邮箱信息');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError('');
+    
+    // 模拟连接邮箱服务器
+    setTimeout(() => {
+      localStorage.setItem('resumeEmail', email);
+      localStorage.setItem('emailPassword', password);
+      localStorage.setItem('syncInterval', syncInterval);
+      localStorage.setItem('autoParse', autoParse);
+      setIsConnected(true);
+      setIsLoading(false);
+    }, 2000);
+  };
+
+  const handleDisconnect = () => {
+    localStorage.removeItem('resumeEmail');
+    localStorage.removeItem('emailPassword');
+    localStorage.removeItem('syncInterval');
+    localStorage.removeItem('autoParse');
+    setEmail('');
+    setPassword('');
+    setIsConnected(false);
+  };
+
+  const handleSyncNow = () => {
+    setIsLoading(true);
+    // 模拟同步简历
+    setTimeout(() => {
+      setIsLoading(false);
+      alert('简历同步完成！找到 3 份新简历');
+    }, 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-xl animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
+              <MailBox className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">邮箱关联设置</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">绑定邮箱，自动收集简历</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+        
+        <div className="p-6 space-y-5">
+          {/* 连接状态 */}
+          {isConnected && (
+            <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-emerald-700 dark:text-emerald-400">已成功连接邮箱</p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-500/70">{email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 邮箱设置表单 */}
+          {!isConnected && (
+            <>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <Mail className="w-4 h-4 inline mr-1" />
+                  邮箱地址
+                </label>
+                <input 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="例如：hr@company.com"
+                  className="input-field"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">支持 Gmail、QQ邮箱、企业邮箱等</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <Settings className="w-4 h-4 inline mr-1" />
+                  邮箱密码/授权码
+                </label>
+                <input 
+                  type="password" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="请输入密码或授权码"
+                  className="input-field"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  如使用Gmail，建议使用<a href="#" className="text-blue-500 hover:underline">应用专用密码</a>
+                </p>
+              </div>
+            </>
+          )}
+
+          {/* 同步设置 */}
+          {isConnected && (
+            <>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <RefreshCw className="w-4 h-4 inline mr-1" />
+                  自动同步间隔
+                </label>
+                <select 
+                  value={syncInterval} 
+                  onChange={e => setSyncInterval(e.target.value)}
+                  className="select-field"
+                >
+                  <option value="5">每 5 分钟</option>
+                  <option value="15">每 15 分钟</option>
+                  <option value="30">每 30 分钟</option>
+                  <option value="60">每 1 小时</option>
+                </select>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-700">
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">自动解析简历</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">收到邮件后自动解析附件简历</p>
+                </div>
+                <button 
+                  onClick={() => setAutoParse(!autoParse)}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${autoParse ? 'bg-emerald-500' : 'bg-gray-300'}`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${autoParse ? 'right-1' : 'left-1'}`} />
+                </button>
+              </div>
+            </>
+          )}
+
+          {error && (
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30">
+              <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+          {isConnected ? (
+            <>
+              <button 
+                onClick={handleDisconnect}
+                className="px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/20 rounded-xl transition-colors font-medium"
+              >
+                断开连接
+              </button>
+              <button 
+                onClick={handleSyncNow}
+                disabled={isLoading}
+                className="btn-gradient-outline flex items-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    同步中...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    立即同步
+                  </>
+                )}
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={onClose} className="btn-gradient-outline">取消</button>
+              <button 
+                onClick={handleConnect}
+                disabled={isLoading}
+                className="btn-gradient flex items-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    连接中...
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="w-4 h-4" />
+                    连接邮箱
+                  </>
+                )}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 邮箱简历列表弹窗
+const EmailResumesModal = ({ onClose }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [resumes, setResumes] = useState([
+    { id: 1, from: 'zhangsan@email.com', subject: '应聘前端工程师 - 张三', date: '2024-01-15', attachments: ['张三_简历.pdf'], parsed: true },
+    { id: 2, from: 'lisi@email.com', subject: '简历投递 - 李四', date: '2024-01-15', attachments: ['李四简历.docx'], parsed: false },
+    { id: 3, from: 'wangwu@email.com', subject: '求职申请 - 王五', date: '2024-01-14', attachments: ['王五_CV.pdf', '作品集.pdf'], parsed: true },
+  ]);
+  const [selectedResumes, setSelectedResumes] = useState([]);
+
+  const toggleSelection = (id) => {
+    setSelectedResumes(prev => 
+      prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
+    );
+  };
+
+  const handleImport = () => {
+    alert(`成功导入 ${selectedResumes.length} 份简历到系统`);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+              <Inbox className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">邮箱简历</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">从关联邮箱中导入简历</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="space-y-3">
+            {resumes.map((resume) => (
+              <div 
+                key={resume.id}
+                className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                  selectedResumes.includes(resume.id) 
+                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10' 
+                    : 'border-gray-200 dark:border-gray-700 hover:border-emerald-300'
+                }`}
+                onClick={() => toggleSelection(resume.id)}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${
+                    selectedResumes.includes(resume.id) 
+                      ? 'border-emerald-500 bg-emerald-500' 
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}>
+                    {selectedResumes.includes(resume.id) && (
+                      <Check className="w-4 h-4 text-white" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{resume.subject}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{resume.from}</p>
+                      </div>
+                      <span className="text-xs text-gray-400">{resume.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <File className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {resume.attachments.join(', ')}
+                      </span>
+                    </div>
+                    {resume.parsed && (
+                      <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                        <Check className="w-3 h-3" />
+                        已解析
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+          <button onClick={onClose} className="btn-gradient-outline">取消</button>
+          <button 
+            onClick={handleImport}
+            disabled={selectedResumes.length === 0}
+            className="btn-gradient disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            导入选中简历 ({selectedResumes.length})
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const CandidateCard = ({ candidate, onView, onEdit, onDelete }) => {
@@ -197,7 +522,7 @@ const CandidateDetail = ({ candidate, onClose }) => {
             <div className="lg:col-span-2 space-y-6">
               <div className="card">
                 <h3 className="text-lg font-semibold text-white mb-4">基本信息</h3>
-<div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-300">
                     <Mail className="w-5 h-5 text-primary-400" />
                     <div>
@@ -444,6 +769,7 @@ const UploadModal = ({ onClose, onUpload }) => {
 };
 
 const Candidates = () => {
+  const navigate = useNavigate();
   const candidates = useStore((state) => state.candidates);
   const deleteCandidate = useStore((state) => state.deleteCandidate);
   const jobs = useStore((state) => state.jobs);
@@ -453,6 +779,10 @@ const Candidates = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewingCandidate, setViewingCandidate] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
+  const [showEmailSettings, setShowEmailSettings] = useState(false);
+  const [showEmailResumes, setShowEmailResumes] = useState(false);
+  
+  const isEmailConnected = !!localStorage.getItem('resumeEmail');
 
   const filteredCandidates = candidates.filter(candidate => {
     const matchesSearch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -483,6 +813,27 @@ const Candidates = () => {
           <p className="text-gray-400 mt-1">管理所有候选人信息，查看简历和匹配度</p>
         </div>
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => navigate('/settings')} 
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all font-medium ${
+              isEmailConnected 
+                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/30' 
+                : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
+            }`}
+          >
+            {isEmailConnected ? <CheckCircle className="w-5 h-5" /> : <Mail className="w-5 h-5" />}
+            {isEmailConnected ? '邮箱已连接' : '关联邮箱'}
+            <ExternalLink className="w-4 h-4" />
+          </button>
+          {isEmailConnected && (
+            <button 
+              onClick={() => setShowEmailResumes(true)} 
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-500/50 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-all font-medium"
+            >
+              <Inbox className="w-5 h-5" />
+              邮箱简历
+            </button>
+          )}
           <button onClick={() => setShowUpload(true)} className="btn-gradient-outline flex items-center gap-2">
             <Upload className="w-5 h-5" />
             上传简历
@@ -574,6 +925,8 @@ const Candidates = () => {
 
       {viewingCandidate && <CandidateDetail candidate={viewingCandidate} onClose={() => setViewingCandidate(null)} />}
       {showUpload && <UploadModal onClose={() => setShowUpload(false)} onUpload={(files) => console.log('Uploaded:', files)} />}
+      {showEmailSettings && <EmailSettingsModal onClose={() => setShowEmailSettings(false)} />}
+      {showEmailResumes && <EmailResumesModal onClose={() => setShowEmailResumes(false)} />}
     </div>
   );
 };
