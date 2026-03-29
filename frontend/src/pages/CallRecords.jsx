@@ -3,15 +3,315 @@ import {
   Phone, PhoneIncoming, PhoneOutgoing, Clock, User, Briefcase,
   CheckCircle, XCircle, AlertCircle, Play, Pause, MoreVertical,
   Filter, Search, Calendar, MessageSquare, TrendingUp, ArrowRight,
-  Mic, MicOff, Volume2, RefreshCw, Send
+  Mic, MicOff, Volume2, RefreshCw, Send, X, Loader2, Video, CalendarCheck
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
+
+// 发起新外呼弹窗
+const NewCallModal = ({ onClose, candidates }) => {
+  const [formData, setFormData] = useState({
+    candidateId: '',
+    questionCount: 5,
+    duration: 15,
+    priority: 'normal'
+  });
+  const [isStarting, setIsStarting] = useState(false);
+
+  const selectedCandidate = candidates.find(c => c.id === parseInt(formData.candidateId));
+
+  const handleStartCall = () => {
+    if (!formData.candidateId) {
+      alert('请选择候选人');
+      return;
+    }
+    setIsStarting(true);
+    setTimeout(() => {
+      alert('外呼已发起！AI正在呼叫候选人...');
+      setIsStarting(false);
+      onClose();
+    }, 1500);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-lg animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
+              <Phone className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">发起AI外呼</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">选择候选人开始AI面试</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <User className="w-4 h-4 inline mr-1" />
+              选择候选人
+            </label>
+            <select 
+              value={formData.candidateId}
+              onChange={e => setFormData({...formData, candidateId: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+            >
+              <option value="">请选择候选人</option>
+              {candidates.map(c => (
+                <option key={c.id} value={c.id}>{c.name} - {c.email}</option>
+              ))}
+            </select>
+          </div>
+
+          {selectedCandidate && (
+            <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-500/10 rounded-xl border border-blue-100 dark:border-blue-500/20">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
+                <span className="text-lg font-bold text-white">{selectedCandidate.name.charAt(0)}</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 dark:text-white">{selectedCandidate.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{selectedCandidate.phone}</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400">匹配度: {selectedCandidate.matchScore}%</p>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                问题数量
+              </label>
+              <select 
+                value={formData.questionCount}
+                onChange={e => setFormData({...formData, questionCount: parseInt(e.target.value)})}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+              >
+                <option value={3}>3道题</option>
+                <option value={5}>5道题</option>
+                <option value={8}>8道题</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                面试时长
+              </label>
+              <select 
+                value={formData.duration}
+                onChange={e => setFormData({...formData, duration: parseInt(e.target.value)})}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+              >
+                <option value={10}>10分钟</option>
+                <option value={15}>15分钟</option>
+                <option value={20}>20分钟</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+          <button onClick={onClose} className="px-6 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+            取消
+          </button>
+          <button 
+            onClick={handleStartCall}
+            disabled={isStarting}
+            className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center gap-2 disabled:opacity-70"
+          >
+            {isStarting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                呼叫中...
+              </>
+            ) : (
+              <>
+                <Phone className="w-5 h-5" />
+                开始呼叫
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 安排人工复试弹窗
+const ScheduleReInterviewModal = ({ onClose, candidate }) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    date: '',
+    time: '',
+    type: '技术面试',
+    interviewer: '',
+    location: '线上会议'
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const interviewers = ['张经理', '王总监', '李总监', '陈总', '刘经理'];
+  const interviewTypes = ['技术面试', '综合面试', 'HR面试', '终面'];
+
+  const handleSubmit = () => {
+    if (!formData.date || !formData.time || !formData.interviewer) {
+      alert('请填写完整信息');
+      return;
+    }
+    setIsSubmitting(true);
+    setTimeout(() => {
+      alert('复试安排成功！已通知候选人和面试官');
+      setIsSubmitting(false);
+      onClose();
+      navigate('/interviews');
+    }, 1500);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-lg animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+              <CalendarCheck className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">安排人工复试</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{candidate?.candidateName}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                面试日期
+              </label>
+              <input 
+                type="date" 
+                value={formData.date}
+                onChange={e => setFormData({...formData, date: e.target.value})}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                面试时间
+              </label>
+              <input 
+                type="time" 
+                value={formData.time}
+                onChange={e => setFormData({...formData, time: e.target.value})}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              面试类型
+            </label>
+            <select 
+              value={formData.type}
+              onChange={e => setFormData({...formData, type: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+            >
+              {interviewTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              面试官
+            </label>
+            <select 
+              value={formData.interviewer}
+              onChange={e => setFormData({...formData, interviewer: e.target.value})}
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+            >
+              <option value="">选择面试官</option>
+              {interviewers.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              面试方式
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, location: '线上会议'})}
+                className={`p-3 rounded-xl border-2 flex items-center justify-center gap-2 ${
+                  formData.location === '线上会议' 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/20' 
+                    : 'border-gray-200 dark:border-gray-700'
+                }`}
+              >
+                <Video className={`w-5 h-5 ${formData.location === '线上会议' ? 'text-blue-500' : 'text-gray-400'}`} />
+                <span className={`text-sm ${formData.location === '线上会议' ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400'}`}>线上会议</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, location: '到场面试'})}
+                className={`p-3 rounded-xl border-2 flex items-center justify-center gap-2 ${
+                  formData.location === '到场面试' 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/20' 
+                    : 'border-gray-200 dark:border-gray-700'
+                }`}
+              >
+                <Calendar className={`w-5 h-5 ${formData.location === '到场面试' ? 'text-blue-500' : 'text-gray-400'}`} />
+                <span className={`text-sm ${formData.location === '到场面试' ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400'}`}>到场面试</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+          <button onClick={onClose} className="px-6 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+            取消
+          </button>
+          <button 
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all flex items-center gap-2 disabled:opacity-70"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                安排中...
+              </>
+            ) : (
+              <>
+                <CalendarCheck className="w-5 h-5" />
+              确认安排
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const CallRecords = () => {
   const { candidates, jobs } = useStore();
   const [activeTab, setActiveTab] = useState('all');
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showNewCallModal, setShowNewCallModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   // 外呼面试记录数据
   const callRecords = [
@@ -179,7 +479,10 @@ const CallRecords = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">外呼面试记录</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">管理AI外呼面试通话记录和面试结果</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30">
+        <button 
+          onClick={() => setShowNewCallModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30"
+        >
           <RefreshCw className="w-4 h-4" />
           <span>发起新外呼</span>
         </button>
@@ -430,11 +733,19 @@ const CallRecords = () => {
 
               {/* Actions */}
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all">
-                  <Send className="w-4 h-4" />
+                <button 
+                  onClick={() => setShowScheduleModal(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all"
+                >
+                  <CalendarCheck className="w-4 h-4" />
                   安排人工复试
                 </button>
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
+                <button 
+                  onClick={() => {
+                    alert('正在重新发起外呼...');
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                >
                   <Phone className="w-4 h-4" />
                   重新外呼
                 </button>
@@ -450,6 +761,20 @@ const CallRecords = () => {
           )}
         </div>
       </div>
+
+      {/* 弹窗 */}
+      {showNewCallModal && (
+        <NewCallModal 
+          onClose={() => setShowNewCallModal(false)} 
+          candidates={candidates} 
+        />
+      )}
+      {showScheduleModal && selectedRecord && (
+        <ScheduleReInterviewModal 
+          onClose={() => setShowScheduleModal(false)} 
+          candidate={selectedRecord}
+        />
+      )}
     </div>
   );
 };

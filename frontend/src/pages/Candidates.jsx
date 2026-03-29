@@ -346,7 +346,7 @@ const CandidateCard = ({ candidate, onView, onEdit, onDelete }) => {
   const StatusIcon = statusConfig[candidate.status]?.icon || Clock;
   
   return (
-    <div className="card-hover group">
+    <div className="card-hover group border border-gray-700/50 rounded-xl">
       <div className="flex items-start gap-4">
         <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center flex-shrink-0">
           <span className="text-lg font-bold text-white">{candidate.name.charAt(0)}</span>
@@ -354,7 +354,7 @@ const CandidateCard = ({ candidate, onView, onEdit, onDelete }) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white group-hover:text-primary-400 transition-colors">{candidate.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">{candidate.name}</h3>
               <p className="text-sm text-gray-400">{job?.title || '未知职位'}</p>
             </div>
             <span className={`badge ${statusConfig[candidate.status]?.color}`}>
@@ -365,11 +365,11 @@ const CandidateCard = ({ candidate, onView, onEdit, onDelete }) => {
       </div>
 
       <div className="mt-4 space-y-2">
-        <div className="flex flex-wrap gap-3 text-sm text-gray-400">
+        <div className="flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-300">
           <span className="flex items-center gap-1"><Mail className="w-4 h-4" /> {candidate.email}</span>
           <span className="flex items-center gap-1"><Phone className="w-4 h-4" /> {candidate.phone}</span>
         </div>
-        <div className="flex flex-wrap gap-3 text-sm text-gray-400">
+        <div className="flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-300">
           <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" /> {candidate.experience}年经验</span>
           <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {candidate.education}</span>
         </div>
@@ -378,34 +378,34 @@ const CandidateCard = ({ candidate, onView, onEdit, onDelete }) => {
       <div className="mt-4 flex items-center gap-2">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-dark-300 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-primary-500 to-emerald-500 rounded-full" style={{ width: `${candidate.matchScore}%` }} />
             </div>
-            <span className="text-sm font-medium text-primary-400">{candidate.matchScore}%</span>
+            <span className="text-sm font-medium text-primary-600 dark:text-primary-400">{candidate.matchScore}%</span>
           </div>
-          <p className="text-xs text-gray-500 mt-1">AI匹配度</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">AI匹配度</p>
         </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         {candidate.skills.slice(0, 3).map(skill => (
-          <span key={skill} className="text-xs px-2 py-1 rounded-md bg-dark-300 text-gray-300">{skill}</span>
+          <span key={skill} className="text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">{skill}</span>
         ))}
         {candidate.skills.length > 3 && (
-          <span className="text-xs px-2 py-1 rounded-md bg-dark-300 text-gray-400">+{candidate.skills.length - 3}</span>
+          <span className="text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">+{candidate.skills.length - 3}</span>
         )}
       </div>
 
-      <div className="mt-4 pt-4 border-t border-dark-100 flex items-center justify-between">
-        <span className="text-xs text-gray-500">投递于 {candidate.appliedAt}</span>
+      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <span className="text-xs text-gray-500 dark:text-gray-400">投递于 {candidate.appliedAt}</span>
         <div className="flex items-center gap-1">
-          <button onClick={() => onView(candidate)} className="p-2 hover:bg-dark-100 rounded-lg text-gray-400 hover:text-white transition-colors">
+          <button onClick={() => onView(candidate)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
             <Eye className="w-4 h-4" />
           </button>
-          <button onClick={() => onEdit(candidate)} className="p-2 hover:bg-dark-100 rounded-lg text-gray-400 hover:text-white transition-colors">
+          <button onClick={() => onEdit(candidate)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors">
             <Edit2 className="w-4 h-4" />
           </button>
-          <button onClick={() => onDelete(candidate.id)} className="p-2 hover:bg-dark-100 rounded-lg text-gray-400 hover:text-red-400 transition-colors">
+          <button onClick={() => onDelete(candidate.id)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -419,20 +419,20 @@ const CandidateTableRow = ({ candidate, onView, onEdit, onDelete }) => {
   const job = jobs.find(j => j.id === candidate.jobId);
   
   return (
-    <tr className="border-b border-dark-100 hover:bg-dark-200/50 transition-colors">
+    <tr className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
       <td className="py-4 px-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
             <span className="text-sm font-bold text-white">{candidate.name.charAt(0)}</span>
           </div>
           <div>
-            <p className="font-medium text-white">{candidate.name}</p>
-            <p className="text-xs text-gray-400">{candidate.email}</p>
+            <p className="font-medium text-gray-900 dark:text-white">{candidate.name}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{candidate.email}</p>
           </div>
         </div>
       </td>
       <td className="py-4 px-4">
-        <p className="text-white">{job?.title || '-'}</p>
+        <p className="text-gray-900 dark:text-white">{job?.title || '-'}</p>
       </td>
       <td className="py-4 px-4">
         <span className={`badge ${statusConfig[candidate.status]?.color}`}>
@@ -441,20 +441,20 @@ const CandidateTableRow = ({ candidate, onView, onEdit, onDelete }) => {
       </td>
       <td className="py-4 px-4">
         <div className="flex items-center gap-2">
-          <div className="w-16 h-2 bg-dark-300 rounded-full overflow-hidden">
+          <div className="w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-primary-500 to-emerald-500 rounded-full" style={{ width: `${candidate.matchScore}%` }} />
           </div>
-          <span className="text-sm font-medium text-primary-400">{candidate.matchScore}%</span>
+          <span className="text-sm font-medium text-primary-500 dark:text-primary-400">{candidate.matchScore}%</span>
         </div>
       </td>
       <td className="py-4 px-4">
-        <p className="text-gray-400">{candidate.experience}年</p>
+        <p className="text-gray-600 dark:text-gray-400">{candidate.experience}年</p>
       </td>
       <td className="py-4 px-4">
-        <p className="text-gray-400 text-sm">{candidate.source}</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">{candidate.source}</p>
       </td>
       <td className="py-4 px-4">
-        <p className="text-gray-400 text-sm">{candidate.appliedAt}</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">{candidate.appliedAt}</p>
       </td>
       <td className="py-4 px-4">
         <div className="flex items-center gap-1">
@@ -473,7 +473,7 @@ const CandidateTableRow = ({ candidate, onView, onEdit, onDelete }) => {
   );
 };
 
-const CandidateDetail = ({ candidate, onClose }) => {
+const CandidateDetail = ({ candidate, onClose, onScheduleInterview, onStartAIMatch, onNavigateToAIMatch }) => {
   const skillData = [
     { skill: 'React', value: 95, candidate: 85 },
     { skill: 'TypeScript', value: 88, candidate: 72 },
@@ -491,106 +491,199 @@ const CandidateDetail = ({ candidate, onClose }) => {
     return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
   };
 
-  const experienceData = [
-    { range: '0-2年', count: 35 },
-    { range: '3-5年', count: 48 },
-    { range: '6-8年', count: 28 },
-    { range: '9-10年', count: 15 },
-  ];
+  // 模拟完整简历数据
+  const resumeData = {
+    summary: '5年前端开发经验，擅长大型企业级应用开发，对React生态有深入研究。',
+    experience: [
+      { company: '某互联网科技公司', position: '高级前端工程师', duration: '2021-至今', description: '负责核心业务系统前端架构设计与开发，主导完成了3个大型项目的技术选型和架构设计。' },
+      { company: '某上市公司', position: '前端工程师', duration: '2019-2021', description: '参与电商平台前端开发，独立负责多个模块的功能开发。' },
+    ],
+    education: { school: '某985大学', degree: '硕士', major: '计算机科学', duration: '2017-2019' },
+    projects: [
+      { name: '企业级SaaS平台', role: '前端架构师', description: '基于React+Node.js构建的SaaS平台，服务超过1000家企业客户。' },
+      { name: '移动端H5应用', role: '核心开发', description: '开发了多款移动端H5应用，覆盖电商、社交等领域。' },
+    ],
+    certifications: ['AWS认证开发者', 'PMP项目管理专业人士'],
+    languages: ['英语CET-6', '日语N2'],
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-dark-200 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto animate-slide-up" onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b border-dark-100 flex items-center justify-between">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 p-6 flex items-center justify-between z-10">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
               <span className="text-2xl font-bold text-white">{candidate.name.charAt(0)}</span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">{candidate.name}</h2>
-              <p className="text-gray-400">高级前端工程师 · {candidate.experience}年经验</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{candidate.name}</h2>
+              <p className="text-gray-600 dark:text-gray-400">高级前端工程师 · {candidate.experience}年经验</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/20 px-2 py-0.5 rounded">{candidate.matchScore}%匹配</span>
+                <span className="text-sm text-gray-500">{candidate.email}</span>
+              </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-dark-100 rounded-lg">
-            <X className="w-5 h-5 text-gray-400" />
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
         
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left - Basic Info */}
+            {/* Left - Resume Content */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="card">
-                <h3 className="text-lg font-semibold text-white mb-4">基本信息</h3>
+              {/* 基本信息卡片 */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 rounded-2xl p-6 border border-blue-100 dark:border-blue-500/20">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5 text-blue-500" />
+                  基本信息
+                </h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-300">
-                    <Mail className="w-5 h-5 text-primary-400" />
+                  <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl">
+                    <Mail className="w-5 h-5 text-blue-500" />
                     <div>
-                      <p className="text-xs text-gray-400">邮箱</p>
-                      <p className="text-sm text-white">{candidate.email}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">邮箱</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{candidate.email}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-300">
-                    <Phone className="w-5 h-5 text-primary-400" />
+                  <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl">
+                    <Phone className="w-5 h-5 text-emerald-500" />
                     <div>
-                      <p className="text-xs text-gray-400">电话</p>
-                      <p className="text-sm text-white">{candidate.phone}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">电话</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{candidate.phone}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-300">
-                    <MapPin className="w-5 h-5 text-primary-400" />
+                  <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl">
+                    <MapPin className="w-5 h-5 text-purple-500" />
                     <div>
-                      <p className="text-xs text-gray-400">学历</p>
-                      <p className="text-sm text-white">{candidate.education}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">学历</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{candidate.education}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-300">
-                    <Calendar className="w-5 h-5 text-primary-400" />
+                  <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl">
+                    <Calendar className="w-5 h-5 text-amber-500" />
                     <div>
-                      <p className="text-xs text-gray-400">投递时间</p>
-                      <p className="text-sm text-white">{candidate.appliedAt}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">投递时间</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{candidate.appliedAt}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="card">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-yellow-400" />
+              {/* 技能分析 */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-yellow-500" />
                   技能分析
                 </h3>
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-2">
                   {candidate.skills.map(skill => (
-                    <span key={skill} className="badge-primary">{skill}</span>
+                    <span key={skill} className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium text-sm border border-blue-100 dark:border-blue-500/30">
+                      {skill}
+                    </span>
                   ))}
                 </div>
               </div>
 
-              <div className="card">
-                <h3 className="text-lg font-semibold text-white mb-4">经验分布</h3>
-                <div className="flex items-end justify-around h-40 gap-4">
-                  {experienceData.map((item, index) => (
-                    <div key={item.range} className="flex flex-col items-center gap-2">
-                      <div className="w-12 bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-md" style={{ height: `${item.count * 2}px` }} />
-                      <span className="text-xs text-gray-400">{item.range}</span>
+              {/* 完整简历内容 */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-500" />
+                  完整简历
+                </h3>
+                
+                {/* 个人简介 */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">个人简介</h4>
+                  <p className="text-gray-700 dark:text-gray-200 leading-relaxed bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl">
+                    {resumeData.summary}
+                  </p>
+                </div>
+
+                {/* 工作经历 */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">工作经历</h4>
+                  <div className="space-y-4">
+                    {resumeData.experience.map((exp, idx) => (
+                      <div key={idx} className="border-l-2 border-blue-500 pl-4 py-2">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold text-gray-900 dark:text-white">{exp.position}</p>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{exp.duration}</span>
+                        </div>
+                        <p className="text-sm text-blue-600 dark:text-blue-400 mb-1">{exp.company}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{exp.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 教育背景 */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">教育背景</h4>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl">
+                    <p className="font-semibold text-gray-900 dark:text-white">{resumeData.education.school}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{resumeData.education.degree} · {resumeData.education.major}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{resumeData.education.duration}</p>
+                  </div>
+                </div>
+
+                {/* 项目经验 */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">项目经验</h4>
+                  <div className="space-y-3">
+                    {resumeData.projects.map((proj, idx) => (
+                      <div key={idx} className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold text-gray-900 dark:text-white">{proj.name}</p>
+                          <span className="text-xs text-blue-600 dark:text-blue-400">{proj.role}</span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{proj.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 证书和语言 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">证书资质</h4>
+                    <div className="space-y-1">
+                      {resumeData.certifications.map((cert, idx) => (
+                        <p key={idx} className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                          <Check className="w-4 h-4 text-emerald-500" /> {cert}
+                        </p>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">语言能力</h4>
+                    <div className="space-y-1">
+                      {resumeData.languages.map((lang, idx) => (
+                        <p key={idx} className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                          <Check className="w-4 h-4 text-emerald-500" /> {lang}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Right - Radar Chart */}
+            {/* Right - Analysis */}
             <div className="space-y-6">
-              <div className="card">
-                <h3 className="text-lg font-semibold text-white mb-4">技能雷达图</h3>
+              {/* 技能雷达图 */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">技能雷达图</h3>
                 <svg width="280" height="280" viewBox="0 0 280 280" className="mx-auto">
                   {[25, 50, 75, 100].map(pct => (
-                    <circle key={pct} cx={cx} cy={cy} r={r * pct / 100} fill="none" stroke="#374151" strokeWidth="1" />
+                    <circle key={pct} cx={cx} cy={cy} r={r * pct / 100} fill="none" stroke="#e5e7eb" strokeWidth="1" />
                   ))}
                   {[0, 1, 2, 3, 4, 5].map(i => {
                     const angle = i * 60;
                     const point = polarToCartesian(cx, cy, r, angle);
-                    return <line key={i} x1={cx} y1={cy} x2={point.x} y2={point.y} stroke="#374151" strokeWidth="1" />;
+                    return <line key={i} x1={cx} y1={cy} x2={point.x} y2={point.y} stroke="#e5e7eb" strokeWidth="1" />;
                   })}
                   
                   <polygon
@@ -598,8 +691,8 @@ const CandidateDetail = ({ candidate, onClose }) => {
                       const point = polarToCartesian(cx, cy, r * d.value / maxValue, i * 60);
                       return `${point.x},${point.y}`;
                     }).join(' ')}
-                    fill="rgba(99, 102, 241, 0.3)"
-                    stroke="#6366f1"
+                    fill="rgba(59, 130, 246, 0.3)"
+                    stroke="#3b82f6"
                     strokeWidth="2"
                   />
                   
@@ -617,7 +710,7 @@ const CandidateDetail = ({ candidate, onClose }) => {
                   {skillData.map((d, i) => {
                     const point = polarToCartesian(cx, cy, r + 25, i * 60);
                     return (
-                      <text key={d.skill} x={point.x} y={point.y} textAnchor="middle" fill="#9ca3af" fontSize="11" fontWeight="500">
+                      <text key={d.skill} x={point.x} y={point.y} textAnchor="middle" fill="#6b7280" fontSize="11" fontWeight="500">
                         {d.skill}
                       </text>
                     );
@@ -625,53 +718,79 @@ const CandidateDetail = ({ candidate, onClose }) => {
                 </svg>
                 <div className="flex justify-center gap-6 mt-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary-500" />
-                    <span className="text-sm text-gray-400">职位要求</span>
+                    <div className="w-3 h-3 rounded-full bg-blue-500" />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">职位要求</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-emerald-500 border border-dashed border-emerald-400" />
-                    <span className="text-sm text-gray-400">候选人</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">候选人</span>
                   </div>
                 </div>
               </div>
 
-              <div className="card">
-                <h3 className="text-lg font-semibold text-white mb-4">匹配度评估</h3>
+              {/* 匹配度评估 */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">匹配度评估</h3>
                 <div className="space-y-4">
                   <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm text-gray-400">技能匹配</span>
-                      <span className="text-sm font-medium text-primary-400">92%</span>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">技能匹配</span>
+                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">92%</span>
                     </div>
-                    <div className="h-2 bg-dark-300 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full" style={{ width: '92%' }} />
+                    <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style={{ width: '92%' }} />
                     </div>
-                  </div>
+</div>
                   <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm text-gray-400">经验匹配</span>
-                      <span className="text-sm font-medium text-emerald-400">88%</span>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">经验匹配</span>
+                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">88%</span>
                     </div>
-                    <div className="h-2 bg-dark-300 rounded-full overflow-hidden">
+                    <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" style={{ width: '88%' }} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm text-gray-400">文化匹配</span>
-                      <span className="text-sm font-medium text-purple-400">85%</span>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">文化匹配</span>
+                      <span className="text-sm font-bold text-purple-600 dark:text-purple-400">85%</span>
                     </div>
-                    <div className="h-2 bg-dark-300 rounded-full overflow-hidden">
+                    <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full" style={{ width: '85%' }} />
                     </div>
                   </div>
-                  <div className="pt-4 border-t border-dark-100">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">综合评分</span>
-                      <span className="text-2xl font-bold text-white">{candidate.matchScore}%</span>
+                  <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700 dark:text-gray-300 font-semibold">综合评分</span>
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{candidate.matchScore}%</span>
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* 操作按钮 */}
+              <div className="space-y-3">
+                <button 
+                  onClick={() => { onNavigateToAIMatch && onNavigateToAIMatch(candidate); }}
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  发起AI外呼面试
+                </button>
+                <button 
+                  onClick={() => { alert('正在安排面试...'); onClose(); }}
+                  className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2"
+                >
+                  <Calendar className="w-5 h-5" />
+                  安排面试
+                </button>
+                <button 
+                  onClick={() => { alert('已加入待跟进列表'); onClose(); }}
+                  className="w-full py-3 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all flex items-center justify-center gap-2"
+                >
+                  <Star className="w-5 h-5" />
+                  加入待跟进
+                </button>
               </div>
             </div>
           </div>
@@ -718,11 +837,11 @@ const UploadModal = ({ onClose, onUpload }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-dark-200 rounded-2xl w-full max-w-xl animate-slide-up" onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b border-dark-100 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white">上传简历</h2>
-          <button onClick={onClose} className="p-2 hover:bg-dark-100 rounded-lg">
-            <X className="w-5 h-5 text-gray-400" />
+      <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-xl animate-slide-up shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">上传简历</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
         
@@ -731,12 +850,12 @@ const UploadModal = ({ onClose, onUpload }) => {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${isDragging ? 'border-primary-500 bg-primary-500/10' : 'border-dark-100 hover:border-primary-500/50'}`}
+            className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${isDragging ? 'border-primary-500 bg-primary-500/10' : 'border-gray-200 dark:border-gray-600 hover:border-primary-500/50'}`}
           >
-            <Upload className={`w-12 h-12 mx-auto mb-4 ${isDragging ? 'text-primary-400' : 'text-gray-400'}`} />
-            <p className="text-white mb-2">拖拽简历文件到此处</p>
-            <p className="text-sm text-gray-400 mb-4">支持 PDF、Word、图片格式，单个文件不超过10MB</p>
-            <label className="btn-gradient-outline cursor-pointer inline-block">
+            <Upload className={`w-12 h-12 mx-auto mb-4 ${isDragging ? 'text-primary-500' : 'text-gray-400'}`} />
+            <p className="text-gray-900 dark:text-white mb-2">拖拽简历文件到此处</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">支持 PDF、Word、图片格式，单个文件不超过10MB</p>
+            <label className="px-4 py-2 bg-gradient-to-r from-primary-500 to-purple-500 text-white font-medium rounded-lg cursor-pointer hover:from-primary-600 hover:to-purple-600 transition-all inline-block">
               选择文件
               <input type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onChange={handleFileSelect} className="hidden" />
             </label>
@@ -745,12 +864,12 @@ const UploadModal = ({ onClose, onUpload }) => {
           {files.length > 0 && (
             <div className="mt-4 space-y-2">
               {files.map((file, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-dark-300">
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-primary-400" />
-                    <span className="text-sm text-white">{file.name}</span>
+                    <FileText className="w-5 h-5 text-primary-500" />
+                    <span className="text-sm text-gray-700 dark:text-gray-200">{file.name}</span>
                   </div>
-                  <button onClick={() => removeFile(index)} className="p-1 hover:bg-dark-100 rounded">
+                  <button onClick={() => removeFile(index)} className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors">
                     <X className="w-4 h-4 text-gray-400" />
                   </button>
                 </div>
@@ -759,9 +878,9 @@ const UploadModal = ({ onClose, onUpload }) => {
           )}
         </div>
 
-        <div className="p-6 border-t border-dark-100 flex justify-end gap-3">
-          <button onClick={onClose} className="btn-gradient-outline">取消</button>
-          <button onClick={handleUpload} className="btn-gradient" disabled={files.length === 0}>上传并解析</button>
+        <div className="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+          <button onClick={onClose} className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">取消</button>
+          <button onClick={handleUpload} className="px-4 py-2 bg-gradient-to-r from-primary-500 to-purple-500 text-white font-medium rounded-lg hover:from-primary-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled={files.length === 0}>上传并解析</button>
         </div>
       </div>
     </div>
@@ -923,7 +1042,7 @@ const Candidates = () => {
         </div>
       )}
 
-      {viewingCandidate && <CandidateDetail candidate={viewingCandidate} onClose={() => setViewingCandidate(null)} />}
+      {viewingCandidate && <CandidateDetail candidate={viewingCandidate} onClose={() => setViewingCandidate(null)} onNavigateToAIMatch={(candidate) => { setViewingCandidate(null); navigate('/aimatch', { state: { candidate } }); }} />}
       {showUpload && <UploadModal onClose={() => setShowUpload(false)} onUpload={(files) => console.log('Uploaded:', files)} />}
       {showEmailSettings && <EmailSettingsModal onClose={() => setShowEmailSettings(false)} />}
       {showEmailResumes && <EmailResumesModal onClose={() => setShowEmailResumes(false)} />}

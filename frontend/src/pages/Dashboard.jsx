@@ -201,49 +201,63 @@ const WeeklyTrend = () => {
 
 const UpcomingInterviews = () => {
   const navigate = useNavigate();
-  const interviews = useStore((state) => state.interviews);
-  const candidates = useStore((state) => state.candidates);
   
-  const getCandidate = (candidateId) => candidates.find(c => c.id === candidateId);
-  
-  const today = new Date().toISOString().split('T')[0];
-  const upcoming = interviews.filter(i => i.date >= today).slice(0, 3);
+  // 模拟的面试安排数据（包含初试和复试）
+  const mockInterviews = [
+    { id: 1, name: '张明', jobTitle: '高级前端工程师', time: '09:30', type: '初试', status: 'AI机器人面试', avatar: '张', typeColor: 'from-blue-500 to-cyan-500' },
+    { id: 2, name: '李娜', jobTitle: '产品经理', time: '10:00', type: '初试', status: 'AI机器人面试', avatar: '李', typeColor: 'from-purple-500 to-pink-500' },
+    { id: 3, name: '王浩', jobTitle: '后端工程师', time: '14:00', type: '初试', status: 'AI机器人面试', avatar: '王', typeColor: 'from-emerald-500 to-teal-500' },
+    { id: 4, name: '刘芳', jobTitle: 'UI设计师', time: '15:30', type: '复试', status: '人工面试', avatar: '刘', typeColor: 'from-amber-500 to-orange-500' },
+    { id: 5, name: '陈伟', jobTitle: '前端工程师', time: '16:00', type: '复试', status: '人工面试', avatar: '陈', typeColor: 'from-rose-500 to-red-500' },
+  ];
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
           <Calendar className="w-5 h-5 text-blue-500" />
-          今日面试
+          面试安排
         </h3>
         <button onClick={() => navigate('/interviews')} className="text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1">
           查看全部 <ArrowRight className="w-4 h-4" />
         </button>
       </div>
+      
+      {/* 面试类型标签 */}
+      <div className="flex gap-2 mb-4">
+        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 flex items-center gap-1">
+          <Brain className="w-3 h-3" /> AI初试 {mockInterviews.filter(i => i.type === '初试').length}场
+        </span>
+        <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center gap-1">
+          <Users className="w-3 h-3" /> 人工复试 {mockInterviews.filter(i => i.type === '复试').length}场
+        </span>
+      </div>
+      
       <div className="space-y-3">
-        {upcoming.length > 0 ? upcoming.map((interview) => {
-          const candidate = getCandidate(interview.candidateId);
-          return (
-            <div key={interview.id} onClick={() => navigate('/interviews')} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-600 dark:hover:to-indigo-900/30 cursor-pointer transition-all border border-gray-100 dark:border-gray-600">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                <span className="text-sm font-bold text-white">{candidate?.name?.charAt(0) || '?'}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{interview.candidateName}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{interview.jobTitle}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-semibold text-blue-500">{interview.time}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">{interview.type === 'video' ? '视频面试' : interview.type === 'phone' ? '电话面试' : '现场面试'}</p>
-              </div>
+        {mockInterviews.map((interview) => (
+          <div key={interview.id} onClick={() => navigate('/interviews')} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-600 dark:hover:to-indigo-900/30 cursor-pointer transition-all border border-gray-100 dark:border-gray-600">
+            <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${interview.typeColor} flex items-center justify-center flex-shrink-0 shadow-md`}>
+              <span className="text-sm font-bold text-white">{interview.avatar}</span>
             </div>
-          );
-        }) : (
-          <div className="text-center py-8 text-gray-400 dark:text-gray-500">
-            <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>暂无面试安排</p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{interview.name}</p>
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                  interview.type === '初试' 
+                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400' 
+                    : 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                }`}>
+                  {interview.type}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{interview.jobTitle}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-semibold text-blue-500">{interview.time}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{interview.status}</p>
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
