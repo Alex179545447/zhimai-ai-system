@@ -4,7 +4,7 @@ node_modules/
 .pnp.js
 
 # Build
-dist/
+# dist/  # 取消注释用于GitHub Pages部署
 build/
 *.local
 
