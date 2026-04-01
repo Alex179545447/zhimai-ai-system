@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// 官网API地址
+const WEBSITE_API = 'https://zhimai-ai.cn/api';
+
 const initialJobs = [
   { id: '1', title: '高级前端工程师', department: '技术部', location: '北京', salary: '35K-50K', status: 'active', applicants: 128, matched: 45, skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'], createdAt: '2024-03-01' },
   { id: '2', title: '产品经理', department: '产品部', location: '上海', salary: '30K-45K', status: 'active', applicants: 86, matched: 32, skills: ['产品设计', '数据分析', '用户研究', 'Axure'], createdAt: '2024-03-05' },
@@ -52,11 +55,60 @@ const useStore = create(
       interviews: initialInterviews,
       activities: initialActivities,
       metrics: initialMetrics,
+      websiteRegistrations: [], // 官网注册数据
+      isLoadingRegistrations: false,
 
       // 当前选中
       selectedJob: null,
       selectedCandidate: null,
       currentView: 'dashboard',
+
+      // 从官网获取注册数据
+      fetchWebsiteRegistrations: async () => {
+        set({ isLoadingRegistrations: true });
+        try {
+          const response = await fetch(`${WEBSITE_API}/registrations`);
+          const data = await response.json();
+          if (data.success && data.data) {
+            // 将官网数据转换为候选人格式
+            const websiteCandidates = data.data.map((reg, index) => ({
+              id: `website_${reg.id}`,
+              name: reg.name || '未填写',
+              avatar: '',
+              email: reg.wechat ? `${reg.wechat}@wechat.com` : `user${index}@example.com`,
+              phone: reg.phone || '未填写',
+              jobId: '1', // 默认关联第一个职位
+              status: 'screening', // 默认状态为筛选中
+              matchScore: Math.floor(Math.random() * 20) + 75, // 随机匹配度75-95
+              skills: reg.identity_type === 'hr' ? ['招聘', 'HR管理', '面试'] : ['猎头', '人才寻访', '行业资源'],
+              experience: reg.identity_type === 'hr' ? 3 : 5,
+              education: '本科',
+              appliedAt: new Date(reg.submit_time).toISOString().split('T')[0],
+              source: '官网申请',
+              userType: reg.user_type,
+              identityType: reg.identity_type,
+              wechat: reg.wechat,
+              websiteId: reg.id
+            }));
+            set({ websiteRegistrations: websiteCandidates, isLoadingRegistrations: false });
+            
+            // 同时更新指标中的候选人总数
+            const totalCandidates = initialCandidates.length + websiteCandidates.length;
+            set((state) => ({
+              metrics: { ...state.metrics, totalCandidates }
+            }));
+          }
+        } catch (error) {
+          console.error('获取官网数据失败:', error);
+          set({ isLoadingRegistrations: false });
+        }
+      },
+
+      // 获取所有候选人（包括官网数据）
+      getAllCandidates: () => {
+        const { candidates, websiteRegistrations } = get();
+        return [...candidates, ...websiteRegistrations];
+      },
 
       // 职位管理
       setSelectedJob: (job) => set({ selectedJob: job }),
@@ -74,7 +126,10 @@ const useStore = create(
       updateCandidate: (id, updates) => set((state) => ({
         candidates: state.candidates.map((c) => c.id === id ? { ...c, ...updates } : c)
       })),
-      deleteCandidate: (id) => set((state) => ({ candidates: state.candidates.filter((c) => c.id !== id) })),
+      deleteCandidate: (id) => set((state) => ({ 
+        candidates: state.candidates.filter((c) => c.id !== id),
+        websiteRegistrations: state.websiteRegistrations.filter((c) => c.id !== id)
+      })),
 
       // 面试管理
       addInterview: (interview) => set((state) => ({
@@ -94,7 +149,8 @@ const useStore = create(
 
       // 获取候选人对应的职位
       getJobForCandidate: (candidateId) => {
-        const candidate = get().candidates.find((c) => c.id === candidateId);
+        const allCandidates = get().getAllCandidates();
+        const candidate = allCandidates.find((c) => c.id === candidateId);
         if (!candidate) return null;
         return get().jobs.find((j) => j.id === candidate.jobId);
       },

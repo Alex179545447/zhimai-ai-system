@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { 
   Plus, Search, Filter, Grid, List, MoreVertical, Mail, Phone,
   MapPin, Calendar, Briefcase, Eye, Edit2, Trash2, Upload, X,
@@ -890,6 +890,9 @@ const UploadModal = ({ onClose, onUpload }) => {
 const Candidates = () => {
   const navigate = useNavigate();
   const candidates = useStore((state) => state.candidates);
+  const websiteRegistrations = useStore((state) => state.websiteRegistrations);
+  const fetchWebsiteRegistrations = useStore((state) => state.fetchWebsiteRegistrations);
+  const getAllCandidates = useStore((state) => state.getAllCandidates);
   const deleteCandidate = useStore((state) => state.deleteCandidate);
   const jobs = useStore((state) => state.jobs);
 
@@ -903,7 +906,15 @@ const Candidates = () => {
   
   const isEmailConnected = !!localStorage.getItem('resumeEmail');
 
-  const filteredCandidates = candidates.filter(candidate => {
+  // 页面加载时获取官网数据
+  useEffect(() => {
+    fetchWebsiteRegistrations();
+  }, []);
+
+  // 获取所有候选人（包括官网数据）
+  const allCandidates = getAllCandidates();
+
+  const filteredCandidates = allCandidates.filter(candidate => {
     const matchesSearch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          candidate.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || candidate.status === statusFilter;
@@ -917,10 +928,10 @@ const Candidates = () => {
   };
 
   const statusCounts = {
-    screening: candidates.filter(c => c.status === 'screening').length,
-    interview: candidates.filter(c => c.status === 'interview').length,
-    offer: candidates.filter(c => c.status === 'offer').length,
-    hired: candidates.filter(c => c.status === 'hired').length,
+    screening: allCandidates.filter(c => c.status === 'screening').length,
+    interview: allCandidates.filter(c => c.status === 'interview').length,
+    offer: allCandidates.filter(c => c.status === 'offer').length,
+    hired: allCandidates.filter(c => c.status === 'hired').length,
   };
 
   return (
@@ -928,8 +939,8 @@ const Candidates = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">候选人管理</h1>
-          <p className="text-gray-400 mt-1">管理所有候选人信息，查看简历和匹配度</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">候选人管理</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">管理所有候选人信息，查看简历和匹配度</p>
         </div>
         <div className="flex items-center gap-3">
           <button 

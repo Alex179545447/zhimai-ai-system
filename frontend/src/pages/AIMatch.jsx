@@ -869,6 +869,9 @@ const AIMatch = () => {
   const location = useLocation();
   const jobs = useStore((state) => state.jobs);
   const candidates = useStore((state) => state.candidates);
+  const updateCandidate = useStore((state) => state.updateCandidate);
+  const addInterview = useStore((state) => state.addInterview);
+  const addActivity = useStore((state) => state.addActivity);
   const [selectedJob, setSelectedJob] = useState('all');
   const [sortBy, setSortBy] = useState('matchScore');
   const [sortOrder, setSortOrder] = useState('desc');
@@ -904,7 +907,35 @@ const AIMatch = () => {
   }, [location.state, jobs]);
 
   const handleStartAIInterview = (candidate, formData) => {
-    alert(`已为 ${candidate.name} 启动AI面试！\n面试类型: ${formData.interviewType}\n问题数量: ${formData.questionCount}道\n时长: ${formData.duration}分钟\n考察重点: ${formData.focusAreas.join(', ')}`);
+    // 1. 更新候选人状态为面试中
+    updateCandidate(candidate.id, { status: 'interview' });
+    
+    // 2. 添加面试记录
+    const newInterview = {
+      candidateId: candidate.id,
+      candidateName: candidate.name,
+      jobTitle: candidate.jobTitle,
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+      type: formData.interviewType === '初试' ? 'ai_initial' : 'ai_review',
+      interviewType: formData.interviewType,
+      status: 'in_progress',
+      questionCount: formData.questionCount,
+      duration: formData.duration,
+      focusAreas: formData.focusAreas,
+      questions: []
+    };
+    addInterview(newInterview);
+    
+    // 3. 添加活动记录
+    addActivity({
+      type: 'interview',
+      content: `为 ${candidate.name} 启动了${formData.interviewType}，预计${formData.duration}分钟`,
+      icon: 'phone'
+    });
+    
+    // 4. 显示成功提示
+    alert(`✅ AI面试已启动！\n\n候选人: ${candidate.name}\n面试类型: ${formData.interviewType}\n问题数量: ${formData.questionCount}道\n预计时长: ${formData.duration}分钟\n考察重点: ${formData.focusAreas.join(', ')}\n\n💡 AI将从题库中随机选取问题进行面试`);
   };
 
   // 模拟匹配数据
